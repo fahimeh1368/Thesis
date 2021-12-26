@@ -1,0 +1,78 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dotnet-rgit</ToolCommandName>
+    <Authors>Fahimeh Hajari, Ehsan Mirsaeedi, Peter Rigby</Authors>
+    <Company>Fahimeh Hajari, Ehsan Mirsaeedi, Peter Rigby</Company>
+    <Title>RelationalGit</Title>
+    <PackageLicenseUrl>https://github.com/fahimeh1368/SofiaWL</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/fahimeh1368/SofiaWL</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/fahimeh1368/SofiaWL</RepositoryUrl>
+    <PackageTags>git;</PackageTags>
+    <Description>RelationalGit extracts valuable information about commits, blames, changes, devs, and pull requests out of git's data structure and imports them to a relational database such as Microsoft SQL Server. These data can be a ground for further source code mining analysis.</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Version>2.0.7</Version>
+    <PackageId>SofiaWL</PackageId>
+    <ApplicationIcon />
+    <StartupObject />
+    <Win32Resource />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Prefer32Bit>true</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20190322182958_test.cs" />
+    <Compile Remove="Migrations\20190322192517_un-test.cs" />
+    <Compile Remove="Migrations\20190604173606_lossofexpertise.cs" />
+    <Compile Remove="Migrations\20190604173848_lossofexpertise.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="8.1.1" />
+    <PackageReference Include="CommandLineParser" Version="2.5.0" />
+    <PackageReference Include="Diacritics" Version="2.0.18316.1" />
+    <PackageReference Include="EFCore.BulkExtensions" Version="2.5.1" />
+    <PackageReference Include="F23.StringSimilarity" Version="3.1.0" />
+    <PackageReference Include="LibGit2Sharp" Version="0.26.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.2.0" />
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.2.1" />
+    <PackageReference Include="Microsoft.WSMan.Management" Version="6.2.1" />
+    <PackageReference Include="Octokit.Extensions" Version="1.0.7" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RelationalGit.Calculation\RelationalGit.Calculation.csproj" />
+    <ProjectReference Include="..\RelationalGit.Data\RelationalGit.Data.csproj" />
+    <ProjectReference Include="..\RelationalGit.Gathering\RelationalGit.Gathering.csproj" />
+    <ProjectReference Include="..\RelationalGit.Recommendation\RelationalGit.Recommendation.csproj" />
+    <ProjectReference Include="..\RelationalGit.Simulation\RelationalGit.Simulation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Octokit">
+      <HintPath>..\..\..\..\source\repos\octokit.net\Octokit\bin\Debug\netstandard1.1\Octokit.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
