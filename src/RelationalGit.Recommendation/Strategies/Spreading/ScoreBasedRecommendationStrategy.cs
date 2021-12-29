@@ -128,7 +128,7 @@ namespace RelationalGit.Recommendation
                 result.Add((newReviewerSet, selectedCandidates));
                
             }
-            if (ShouldReplaceReviewer(pullRequestContext, strategies))
+            if (ShouldReplaceReviewer(pullRequestContext, strategies) || (ShouldFarReplaceReviewer(pullRequestContext, strategies) && !pullRequestContext.PullRequestFilesAreSafe))
             {
                 var selectedCandidatesLength = GetSelectedCandidatesLength(pullRequestContext, strategies, "replace");
                 var numberOfReplacements = Math.Min(availableDevs.Length, selectedCandidatesLength);
@@ -259,11 +259,11 @@ namespace RelationalGit.Recommendation
 
             if (strategies.Length == 0)
             {
-                result = _pullRequestReviewerSelectionDefaultStrategy.Action == "replacerandom";
+                result = _pullRequestReviewerSelectionDefaultStrategy.Action.Contains("random");
             }
             else
             {
-                result = strategies.Any(q => q.Action == "replacerandom");
+                result = strategies.Any(q => q.Action == "replacerandom" ||  q.Action == "farreplacerandom");
             }
 
             return result;
@@ -284,6 +284,25 @@ namespace RelationalGit.Recommendation
             else
             {
                 result = strategies.Any(q => q.Action.StartsWith("replace"));
+            }
+
+            return result;
+        }
+        private bool ShouldFarReplaceReviewer(PullRequestContext pullRequestContext, PullRequestReviewerSelectionStrategy[] strategies)
+        {
+
+            if (pullRequestContext.ActualReviewers.Length == 0)
+                return false;
+
+            var result = false;
+
+            if (strategies.Length == 0)
+            {
+                result = _pullRequestReviewerSelectionDefaultStrategy.Action.StartsWith("farreplace");
+            }
+            else
+            {
+                result = strategies.Any(q => q.Action.StartsWith("farreplace"));
             }
 
             return result;
