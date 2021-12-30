@@ -186,4 +186,9 @@ We changed Contribution of developers from Yearly to the weighted one and value 
 We change the line of the config file manually which is "RecommenderOption": "alpha-1,beta-1,risk-3,hoarder_ratio-1", To change k for Risky files. In this line risk-number shows the k+1. It means that if we have risk-3 files that have less than 2 developer are considered risky. The results of sensitive analysis exists in [here](https://docs.google.com/spreadsheets/d/1CXXAPims3Zjs5zeDnFH80Gz3sq_GmYOYVpGt3p0oIP4/edit#gid=1577563518) 
 
 ## Research Questions(Chapter2)
-## RQ1: Recommenders++: Which recommender suggest the best additional re-viewer?
+For the research questions of this chapter we changed the code and config file. There is a line in a config file which is shown below and we can choose that which approach we want to use for simulation.
+"PullRequestReviewerSelectionStrategy" : "0:nothing-nothing,-:replacerandom-1" 
+If we have this line in the config file it is a default simulation that randomly replaces and it used in previous reseach questions. We describe in next research questions the command that should be use.
+## RQ1, Recommenders++: Which recommender suggest the best additional re-viewer?
+For this reseach qiestion we changed the config file PullRequestReviewerSelectionStrategy to the "0:nothing-nothing,-:add-1" which add a reviewer when we have risky file in a pull requests.
+
