@@ -188,7 +188,7 @@ We change the line of the config file manually which is "RecommenderOption": "al
 ## Research Questions(Chapter2)
 For the research questions of this chapter we changed the code and config file. There is a line in a config file which is shown below and we can choose that which approach we want to use for simulation.
 "PullRequestReviewerSelectionStrategy" : "0:nothing-nothing,-:replacerandom-1" 
-If we have this line in the config file it is a default simulation that randomly replaces and it used in previous reseach questions. We describe in next research questions the command that should be use.
+If we have this line in the config file it is a default simulation that randomly replaces which is used in previous reseach questions. We describe in next research questions the command that should be use.
 ## RQ1, Recommenders++: Which recommender suggest the best additional re-viewer?
-For this reseach qiestion we changed the config file PullRequestReviewerSelectionStrategy to the "0:nothing-nothing,-:add-1" which add a reviewer when we have risky file in a pull requests.
+For this reseach question we changed the config file PullRequestReviewerSelectionStrategy to the "0:nothing-nothing,-:add-1" which add a reviewer when we have risky file in a pull requests and then calculate results for different recommenders. 
 
