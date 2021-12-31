@@ -187,9 +187,12 @@ We change the line of the config file manually which is "RecommenderOption": "al
 
 ## Research Questions(Chapter2)
 For the research questions of this chapter we changed the code and config file. There is a line in a config file which is shown below and we can choose that which approach we want to use for simulation.
+---
 "PullRequestReviewerSelectionStrategy" : "0:nothing-nothing,-:replacerandom-1"
 This is a default simulation that we use for previous research questions. This config significant that if there is 0 actual reviewer we do not change anything, but if we have one or more actual reviewer we will replace suggested reviewer by the recommender. We describe in next research questions the command that should be use to get the results.
 ## RQ1, Recommenders++: Which recommender suggest the best additional re-viewer?
 For this reseach question we changed the config file PullRequestReviewerSelectionStrategy to the "0:nothing-nothing,-:add-1" which add a reviewer when we have risky file in a pull requests and then calculate results for different recommenders. 
 ## RQ2, Two-weeks’ Notice:  What is the impact on FaR if we know in advance that someone will leave?
+PullRequestReviewerSelectionStrategy
 
+## RQ3و FaR Replacement:  How well doesTurnoverRecperform when we only replacereviewers onRisky Pull Requests?
