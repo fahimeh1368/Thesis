@@ -11,6 +11,7 @@ namespace RelationalGit.Recommendation
         private double _alpha;
         private double _beta;
         private double _hoarderRatio;
+        string _pullRequestReviewerSelectionStrategy;
 
         public TurnoverRecRecommendationStrategy(string knowledgeSaveReviewerReplacementType, 
             ILogger logger, int? numberOfPeriodsForCalculatingProbabilityOfStay, 
@@ -25,6 +26,7 @@ namespace RelationalGit.Recommendation
             _alpha = parameters.Alpha;
             _beta = parameters.Beta;
             _hoarderRatio = parameters.hoarderRatio;
+            _pullRequestReviewerSelectionStrategy = pullRequestReviewerSelectionStrategy;
         }
 
         private (double Alpha,double Beta,double hoarderRatio) GetParameters(string recommenderOption)
@@ -42,7 +44,7 @@ namespace RelationalGit.Recommendation
 
         internal override double ComputeReviewerScore(PullRequestContext pullRequestContext, DeveloperKnowledge reviewer)
         {
-            var reviewerImportance = pullRequestContext.IsHoarder(reviewer.DeveloperName) ? _hoarderRatio : 1;
+            var reviewerImportance = pullRequestContext.IsHoarder(reviewer.DeveloperName, _pullRequestReviewerSelectionStrategy) ? _hoarderRatio : 1;
             
             var probabilityOfStay = pullRequestContext.GetProbabilityOfStay(reviewer.DeveloperName, _numberOfPeriodsForCalculatingProbabilityOfStay.Value);
             var effort = pullRequestContext.GetEffort(reviewer.DeveloperName, _numberOfPeriodsForCalculatingProbabilityOfStay.Value);

@@ -311,14 +311,17 @@ namespace RelationalGit.Recommendation
         private bool ShouldAddReviewer(PullRequestContext pullRequestContext, PullRequestReviewerSelectionStrategy[] strategies)
         {
             var result = false;
+            var leaver_result = false;
 
             if (strategies.Length == 0)
             {
                 result =  _pullRequestReviewerSelectionDefaultStrategy.Action == "add";
+                leaver_result = _pullRequestReviewerSelectionDefaultStrategy.Action == "leaveradd";
             }
             else
             {
                 result = strategies.Any(q => q.Action == "add");
+                leaver_result = strategies.Any(q => q.Action == "leaveradd");
             }
 
             if (result)
@@ -327,6 +330,14 @@ namespace RelationalGit.Recommendation
                     return true;
 
                 if (_addOnlyToUnsafePullrequests.Value && !pullRequestContext.PullRequestFilesAreSafe)
+                    return true;
+            }
+            else if (leaver_result)
+            {
+                if (!_addOnlyToUnsafePullrequests.HasValue || !_addOnlyToUnsafePullrequests.Value)
+                    return true;
+
+                if (_addOnlyToUnsafePullrequests.Value && pullRequestContext.PullHasLeaver)
                     return true;
             }
 

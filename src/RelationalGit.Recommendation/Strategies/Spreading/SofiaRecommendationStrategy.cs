@@ -13,6 +13,7 @@ namespace RelationalGit.Recommendation
         private double _beta;
         private int _riskOwenershipThreshold;
         private double _hoarderRatio;
+        string _pullRequestReviewerSelectionStrategy;
 
         public SofiaRecommendationStrategy(string knowledgeSaveReviewerReplacementType, 
             ILogger logger, int? numberOfPeriodsForCalculatingProbabilityOfStay, 
@@ -28,6 +29,7 @@ namespace RelationalGit.Recommendation
             _beta = parameters.Beta;
             _riskOwenershipThreshold = parameters.RiskOwenershipThreshold;
             _hoarderRatio = parameters.HoarderRatio;
+            _pullRequestReviewerSelectionStrategy = pullRequestReviewerSelectionStrategy;
         }
 
         private (double Alpha,double Beta,int RiskOwenershipThreshold,double HoarderRatio) GetParameters(string recommenderOption)
@@ -46,7 +48,7 @@ namespace RelationalGit.Recommendation
 
         internal override double ComputeReviewerScore(PullRequestContext pullRequestContext, DeveloperKnowledge reviewer)
         {
-            double spreadingScore = GetPersistSpreadingScore(pullRequestContext, reviewer);
+            double spreadingScore = GetPersistSpreadingScore(pullRequestContext, reviewer, _pullRequestReviewerSelectionStrategy);
 
             var expertiseScore = ComputeBirdReviewerScore(pullRequestContext, reviewer);
 
@@ -57,9 +59,9 @@ namespace RelationalGit.Recommendation
             return score;
         }
 
-        private double GetPersistSpreadingScore(PullRequestContext pullRequestContext, DeveloperKnowledge reviewer)
+        private double GetPersistSpreadingScore(PullRequestContext pullRequestContext, DeveloperKnowledge reviewer, string pullRequestReviewerSelectionStrategy)
         {
-            var reviewerImportance = pullRequestContext.IsHoarder(reviewer.DeveloperName) ? _hoarderRatio : 1;
+            var reviewerImportance = pullRequestContext.IsHoarder(reviewer.DeveloperName, pullRequestReviewerSelectionStrategy) ? _hoarderRatio : 1;
 
             double probabilityOfStay = pullRequestContext.GetProbabilityOfStay(reviewer.DeveloperName, _numberOfPeriodsForCalculatingProbabilityOfStay.Value);
             var effort = pullRequestContext.GetEffort(reviewer.DeveloperName, _numberOfPeriodsForCalculatingProbabilityOfStay.Value);

@@ -19,6 +19,7 @@ namespace RelationalGit.Simulation
         public Developer[] AvailableDevelopers;
 
         private bool? _isSafe;
+        private bool? _hasLeaver;
 
         private static Dictionary<string, (int TotalReviews, int TotalCommits)> _contributionsDic = new Dictionary<string, (int TotalReviews, int TotalCommits)>();
 
@@ -68,11 +69,30 @@ namespace RelationalGit.Simulation
             }
         }
 
-        public bool IsHoarder(string normalizedDeveloperName)
+        public bool PullHasLeaver
+        {
+            get
+            {
+
+                if (_hasLeaver == null)
+                {
+                    FindHoardersaAfterLeavers();
+                }
+
+                return _hasLeaver.Value;
+            }
+        }
+
+        public bool IsHoarder(string normalizedDeveloperName, string pullRequestReviewerSelectionStrategy)
         {
             if (Hoarders == null)
             {
-                FindHoarders();
+                if (pullRequestReviewerSelectionStrategy.Contains("leaveradd"))
+                {
+                    FindHoardersaAfterLeavers();
+                }
+                else
+                    FindHoarders();
             }
 
             return Hoarders.Contains(normalizedDeveloperName);
@@ -129,7 +149,68 @@ namespace RelationalGit.Simulation
                 _isSafe = true;
             }
         }
-      
+        private void FindHoardersaAfterLeavers()
+        {
+            Hoarders = new HashSet<string>();
+            _fileOwners = new Dictionary<string, List<string>>();
+
+            var availableDevelopersOfPeriod = AvailableDevelopers.Select(q => q.NormalizedName).ToHashSet();
+            var blameSnapshot = KnowledgeMap.CommitBasedKnowledgeMap;
+
+            foreach (var pullRequestFile in PullRequestFiles)
+            {
+                var canonicalPath = CanononicalPathMapper.GetValueOrDefault(pullRequestFile.FileName);
+
+                if (canonicalPath == null)
+                {
+                    continue;
+                }
+                var two_next_week = PullRequest.CreatedAtDateTime.Value.AddDays(14);
+                var committers = KnowledgeMap.CommitBasedKnowledgeMap[canonicalPath]?.Where(q => q.Value.Developer.LastParticipationDateTime > PullRequest.CreatedAtDateTime)
+                    ?.Select(q => q.Value.Developer.NormalizedName) ?? Array.Empty<string>();
+
+                var reviewers = KnowledgeMap.ReviewBasedKnowledgeMap[canonicalPath]?.Where(q => q.Value.Developer.LastParticipationDateTime > PullRequest.CreatedAtDateTime)
+                    ?.Select(q => q.Value.Developer.NormalizedName) ?? Array.Empty<string>();
+
+                var availableContributors = committers.Union(reviewers).Where(q => availableDevelopersOfPeriod.Contains(q)).ToArray();
+
+                var leaver_committers = KnowledgeMap.CommitBasedKnowledgeMap[canonicalPath]?.Where(q => q.Value.Developer.LastParticipationDateTime < two_next_week)
+                    ?.Select(q => q.Value.Developer.NormalizedName) ?? Array.Empty<string>();
+
+                var leaver_reviewers = KnowledgeMap.ReviewBasedKnowledgeMap[canonicalPath]?.Where(q => q.Value.Developer.LastParticipationDateTime < two_next_week)
+                    ?.Select(q => q.Value.Developer.NormalizedName) ?? Array.Empty<string>();
+
+                var leaver = leaver_committers.Union(leaver_reviewers).Where(q => availableDevelopersOfPeriod.Contains(q)).ToArray();
+                var availableAfterLeave = availableContributors.Where(a => !leaver.Contains(a)).ToArray();
+                var knowledgable = availableContributors.Length - leaver.Length;
+
+                if (availableContributors.Length >= 2 && knowledgable < 2)
+                {
+                    _hasLeaver = true;
+
+                    if (knowledgable == 1)
+                    {
+                        Hoarders.Add(availableAfterLeave[0]);
+                    }
+                }
+
+                foreach (var availableContributor in availableAfterLeave)
+                {
+                    if (!_fileOwners.ContainsKey(canonicalPath))
+                    {
+                        _fileOwners[canonicalPath] = new List<string>();
+                    }
+
+                    _fileOwners[canonicalPath].Add(availableContributor);
+                }
+            }
+
+            if (!_hasLeaver.HasValue)
+            {
+                _hasLeaver = false;
+            }
+        }
+
         public DateTime? GetLastContribution(Developer developer)
         {
             if (developer.LastCommitDateTime == null)

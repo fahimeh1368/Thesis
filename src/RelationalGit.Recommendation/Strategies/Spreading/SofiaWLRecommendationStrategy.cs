@@ -13,6 +13,7 @@ namespace RelationalGit.Recommendation
         private double _beta;
         private int _riskOwenershipThreshold;
         private double _hoarderRatio;
+        private string _pullRequestReviewerSelectionStrategy;
         public SofiaWLRecommendationStrategy(string knowledgeSaveReviewerReplacementType,
             ILogger logger, int? numberOfPeriodsForCalculatingProbabilityOfStay,
             string pullRequestReviewerSelectionStrategy,
@@ -27,10 +28,11 @@ namespace RelationalGit.Recommendation
             _beta = parameters.Beta;
             _riskOwenershipThreshold = parameters.RiskOwenershipThreshold;
             _hoarderRatio = parameters.HoarderRatio;
+            _pullRequestReviewerSelectionStrategy = pullRequestReviewerSelectionStrategy;
         }
         private double GetPersistSpreadingScore(PullRequestContext pullRequestContext, DeveloperKnowledge reviewer)
         {
-            var reviewerImportance = pullRequestContext.IsHoarder(reviewer.DeveloperName) ? _hoarderRatio : 1;
+            var reviewerImportance = pullRequestContext.IsHoarder(reviewer.DeveloperName, _pullRequestReviewerSelectionStrategy) ? _hoarderRatio : 1;
 
             var probabilityOfStay = pullRequestContext.GetProbabilityOfStay(reviewer.DeveloperName, _numberOfPeriodsForCalculatingProbabilityOfStay.Value);
             var effort = pullRequestContext.GetEffort(reviewer.DeveloperName, _numberOfPeriodsForCalculatingProbabilityOfStay.Value);
