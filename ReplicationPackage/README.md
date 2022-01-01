@@ -194,7 +194,7 @@ For this reseach question we changed the config file PullRequestReviewerSelectio
 ## RQ2, Two-weeks’ Notice:  What is the impact on FaR if we know in advance that someone will leave?
 We should use "leaveradd" in pullRequestReviewerSelectionStrategy to add additinal reviewer when we have leaver in the pull request that cause a file be risky. 
 "PullRequestReviewerSelectionStrategy" : "0:nothing-nothing,-:leaveradd-1",
-## RQ3و FaR Replacement:  How well doesTurnoverRecperform when we only replacereviewers onRisky Pull Requests?
+## RQ3, FaR Replacement:  How well doesTurnoverRecperform when we only replacereviewers onRisky Pull Requests?
 We should change "PullRequestReviewerSelectionStrategy" to farreplacerandom which is shown in following line. With this command when we have risly file in a pull request we replace randomly one of actual reviewers with the suggested reviewer.
 "PullRequestReviewerSelectionStrategy" : "0:nothing-nothing,-:farreplacerandom-1",
 
