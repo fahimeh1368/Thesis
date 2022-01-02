@@ -128,7 +128,7 @@ namespace RelationalGit.Recommendation
                 result.Add((newReviewerSet, selectedCandidates));
                
             }
-            if (ShouldReplaceReviewer(pullRequestContext, strategies) || (ShouldFarReplaceReviewer(pullRequestContext, strategies) && !pullRequestContext.PullRequestFilesAreSafe))
+            if (ShouldReplaceReviewer(pullRequestContext, strategies) || (ShouldFarReplaceReviewer(pullRequestContext, strategies) && !pullRequestContext.PullRequestFilesAreSafe)|| (ShouldHoarderReplace(pullRequestContext, strategies) && pullRequestContext.HasHoarder()))
             {
                 var selectedCandidatesLength = GetSelectedCandidatesLength(pullRequestContext, strategies, "replace");
                 var numberOfReplacements = Math.Min(availableDevs.Length, selectedCandidatesLength);
@@ -307,21 +307,44 @@ namespace RelationalGit.Recommendation
 
             return result;
         }
+        private bool ShouldHoarderReplace(PullRequestContext pullRequestContext, PullRequestReviewerSelectionStrategy[] strategies)
+        {
+
+            if (pullRequestContext.ActualReviewers.Length == 0)
+                return false;
+
+            var result = false;
+
+            if (strategies.Length == 0)
+            {
+                result = _pullRequestReviewerSelectionDefaultStrategy.Action.StartsWith("addAndReplace");
+            }
+            else
+            {
+                result = strategies.Any(q => q.Action.StartsWith("addAndReplace"));
+            }
+
+            return result;
+        }
 
         private bool ShouldAddReviewer(PullRequestContext pullRequestContext, PullRequestReviewerSelectionStrategy[] strategies)
         {
             var result = false;
             var leaver_result = false;
+            var add_abandon = false;
 
             if (strategies.Length == 0)
             {
                 result =  _pullRequestReviewerSelectionDefaultStrategy.Action == "add";
-                leaver_result = _pullRequestReviewerSelectionDefaultStrategy.Action == "leaveradd";
+                leaver_result = _pullRequestReviewerSelectionDefaultStrategy.Action == "addleaver";
+                add_abandon = _pullRequestReviewerSelectionDefaultStrategy.Action == "addAndReplace";
+
             }
             else
             {
                 result = strategies.Any(q => q.Action == "add");
-                leaver_result = strategies.Any(q => q.Action == "leaveradd");
+                leaver_result = strategies.Any(q => q.Action == "addleaver");
+                add_abandon = strategies.Any(q => q.Action == "addAndReplace");
             }
 
             if (result)
@@ -338,6 +361,14 @@ namespace RelationalGit.Recommendation
                     return true;
 
                 if (_addOnlyToUnsafePullrequests.Value && pullRequestContext.PullHasLeaver)
+                    return true;
+            }
+            else if (add_abandon)
+            {
+                if (!_addOnlyToUnsafePullrequests.HasValue || !_addOnlyToUnsafePullrequests.Value)
+                    return true;
+
+                if (_addOnlyToUnsafePullrequests.Value && pullRequestContext.PullRequestFilesAreAbandon)
                     return true;
             }
 

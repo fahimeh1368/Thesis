@@ -20,6 +20,8 @@ namespace RelationalGit.Simulation
 
         private bool? _isSafe;
         private bool? _hasLeaver;
+        private bool? _isAbandon;
+
 
         private static Dictionary<string, (int TotalReviews, int TotalCommits)> _contributionsDic = new Dictionary<string, (int TotalReviews, int TotalCommits)>();
 
@@ -68,6 +70,19 @@ namespace RelationalGit.Simulation
                 return _isSafe.Value;
             }
         }
+        public bool PullRequestFilesAreAbandon
+        {
+            get
+            {
+
+                if (_isAbandon == null)
+                {
+                    FindHoarders();
+                }
+
+                return _isAbandon.Value;
+            }
+        }
 
         public bool PullHasLeaver
         {
@@ -96,6 +111,15 @@ namespace RelationalGit.Simulation
             }
 
             return Hoarders.Contains(normalizedDeveloperName);
+        }
+        public bool HasHoarder()
+        {
+            if (Hoarders == null)
+            {
+                
+                    FindHoarders();
+            }
+            return Hoarders.Any();
         }
 
         private void FindHoarders()
@@ -131,6 +155,10 @@ namespace RelationalGit.Simulation
                     {
                         Hoarders.Add(availableContributors[0]);
                     }
+                    if (availableContributors.Length == 0)
+                    {
+                        _isAbandon = true;
+                    }
                 }
 
                 foreach (var availableContributor in availableContributors)
@@ -147,6 +175,10 @@ namespace RelationalGit.Simulation
             if (!_isSafe.HasValue)
             {
                 _isSafe = true;
+            }
+            if (!_isAbandon.HasValue)
+            {
+                _isAbandon = false;
             }
         }
         private void FindHoardersaAfterLeavers()
