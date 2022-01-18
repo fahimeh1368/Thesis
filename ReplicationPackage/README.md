@@ -198,7 +198,7 @@ We should use "addleaver" in pullRequestReviewerSelectionStrategy to add additin
 We should change "PullRequestReviewerSelectionStrategy" to farreplacerandom which is shown in following line. With this command when we have risly file in a pull request we replace randomly one of actual reviewers with the suggested reviewer.
 "PullRequestReviewerSelectionStrategy" : "0:nothing-nothing,-:farreplacerandom-1",
 
-## RQ4, AwareFaR:  How  well  does  the  combination  ofFaR++when  there  areabandonded files andFaR Replacementwhen there are only hoarded files work?
+## RQ4, AwareFaR:  How  well  does  the  combination  of FaR++when  there  areabandonded files and FaR Replacementwhen there are only hoarded files work?
 In this research question we add new reviewer when we have abandoned file and if there is hoarder file we replace one of actual reviewers with suggested reviewer.
 We should use addAndReplace in  PullRequestReviewerSelectionStrategy which is shown bellow.
 "PullRequestReviewerSelectionStrategy" : "0:nothing-nothing,-:addAndReplace-1",
