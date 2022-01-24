@@ -52,7 +52,7 @@ This scripts runs all the defined reviewer recommendation algorithms accross all
 
 **Note**: Make sure you have set the PowerShell [execution policy](https://superuser.com/questions/106360/how-to-enable-execution-of-powershell-scripts) to **Unrestricted** or **RemoteAssigned**.
 
-## Research Questions(Chapter1)
+## Research Questions
 
 In following sections, we show which simulations are used for which research questions. For each simulation, a sample is provided that illustrates how the simulation can be run using the tool.
 
@@ -134,7 +134,22 @@ dotnet-rgit --cmd simulate-recommender --recommendation-strategy WhoDo  --conf-p
 dotnet-rgit --cmd simulate-recommender --recommendation-strategy SofiaWL  --conf-path <path_to_config_file>
 ```
 ---
+For the following research questions we changed the code and config file. There is a line in a config file which is shown below and we can choose that which approach we want to use for simulation.
+"PullRequestReviewerSelectionStrategy" : "0:nothing-nothing,-:replacerandom-1"
+This is a default simulation that we use for previous research questions. This config significant that if there is 0 actual reviewer we do not change anything, but if we have one or more actual reviewer we will replace suggested reviewer by the recommender. We describe in next research questions the command that should be use to get the results.
+## RQ1, Recommenders++: Which recommender suggest the best additional re-viewer?
+For this reseach question we changed the config file PullRequestReviewerSelectionStrategy to the "0:nothing-nothing,-:add-1" which add a reviewer when we have risky file in a pull requests and then calculate results for different recommenders. 
+## RQ2, Two-weeks’ Notice:  What is the impact on FaR if we know in advance that someone will leave?
+We should use "addleaver" in pullRequestReviewerSelectionStrategy to add additinal reviewer when we have leaver in the pull request that cause a file be risky. 
+"PullRequestReviewerSelectionStrategy" : "0:nothing-nothing,-:addleaver-1",
+## RQ3, FaR Replacement:  How well doesTurnoverRecperform when we only replacereviewers onRisky Pull Requests?
+We should change "PullRequestReviewerSelectionStrategy" to farreplacerandom which is shown in following line. With this command when we have risly file in a pull request we replace randomly one of actual reviewers with the suggested reviewer.
+"PullRequestReviewerSelectionStrategy" : "0:nothing-nothing,-:farreplacerandom-1",
 
+## RQ4, AwareFaR:  How  well  does  the  combination  of FaR++when  there  areabandonded files and FaR Replacementwhen there are only hoarded files work?
+In this research question we add new reviewer when we have abandoned file and if there is hoarder file we replace one of actual reviewers with suggested reviewer.
+We should use addAndReplace in  PullRequestReviewerSelectionStrategy which is shown bellow.
+"PullRequestReviewerSelectionStrategy" : "0:nothing-nothing,-:addAndReplace-1",
 ## Dump the Simulation Data to CSV
 
 Log into the database and run
@@ -185,20 +200,5 @@ We changed Contribution of developers from Yearly to the weighted one and value 
 ### Sensitivity analysis for k in SofiaV2
 We change the line of the config file manually which is "RecommenderOption": "alpha-1,beta-1,risk-3,hoarder_ratio-1", To change k for Risky files. In this line risk-number shows the k+1. It means that if we have risk-3 files that have less than 2 developer are considered risky. The results of sensitive analysis exists in [here](https://docs.google.com/spreadsheets/d/1CXXAPims3Zjs5zeDnFH80Gz3sq_GmYOYVpGt3p0oIP4/edit#gid=1577563518) 
 
-## Research Questions(Chapter2)
-For the research questions of this chapter we changed the code and config file. There is a line in a config file which is shown below and we can choose that which approach we want to use for simulation.
-"PullRequestReviewerSelectionStrategy" : "0:nothing-nothing,-:replacerandom-1"
-This is a default simulation that we use for previous research questions. This config significant that if there is 0 actual reviewer we do not change anything, but if we have one or more actual reviewer we will replace suggested reviewer by the recommender. We describe in next research questions the command that should be use to get the results.
-## RQ1, Recommenders++: Which recommender suggest the best additional re-viewer?
-For this reseach question we changed the config file PullRequestReviewerSelectionStrategy to the "0:nothing-nothing,-:add-1" which add a reviewer when we have risky file in a pull requests and then calculate results for different recommenders. 
-## RQ2, Two-weeks’ Notice:  What is the impact on FaR if we know in advance that someone will leave?
-We should use "addleaver" in pullRequestReviewerSelectionStrategy to add additinal reviewer when we have leaver in the pull request that cause a file be risky. 
-"PullRequestReviewerSelectionStrategy" : "0:nothing-nothing,-:addleaver-1",
-## RQ3, FaR Replacement:  How well doesTurnoverRecperform when we only replacereviewers onRisky Pull Requests?
-We should change "PullRequestReviewerSelectionStrategy" to farreplacerandom which is shown in following line. With this command when we have risly file in a pull request we replace randomly one of actual reviewers with the suggested reviewer.
-"PullRequestReviewerSelectionStrategy" : "0:nothing-nothing,-:farreplacerandom-1",
 
-## RQ4, AwareFaR:  How  well  does  the  combination  of FaR++when  there  areabandonded files and FaR Replacementwhen there are only hoarded files work?
-In this research question we add new reviewer when we have abandoned file and if there is hoarder file we replace one of actual reviewers with suggested reviewer.
-We should use addAndReplace in  PullRequestReviewerSelectionStrategy which is shown bellow.
-"PullRequestReviewerSelectionStrategy" : "0:nothing-nothing,-:addAndReplace-1",
+
