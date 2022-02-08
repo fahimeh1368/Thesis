@@ -33,13 +33,6 @@ You need to get the latest version of [PowerShell Core](https://github.com/Power
 # RelationalGit :cupid: Open Source
 RelationalGit has been built on top of the most popular Git Libraries. It uses [libgit2Sharp](https://github.com/libgit2/libgit2sharp), [Octokit.Net](https://github.com/octokit/octokit.net), and [Octokit.Extensions](https://github.com/mirsaeedi/octokit.net.extensions) in order to extract data from git data structure and Github respectively.
 
-# Install (dotnet Global Tool)
-
-RelationalGit is a [dotnet Global tool](https://www.nuget.org/packages/RelationalGit). You can use it seamlessly with your favorite command-line application.
-
-```PowerShell
-dotnet tool install --global SofiaWL --version 2.0.8
-```
 
 # Configuration File
 
